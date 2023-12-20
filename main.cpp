@@ -53,13 +53,19 @@ class Board {
     Card cards[5];
     int n_cards = 0;
     int b_blind = 5;
-
+    
     public:
+        int n_players = 2;
         int total_bank();
         void init();
         void add_card(Card card);
+        Board(int n_players_);
 
 };
+
+Board::Board(int n_players_) {
+    n_players = n_players_;
+}
 
 void Board::add_card(Card card) {
     if(n_cards > 4) return;
@@ -159,7 +165,13 @@ int main() {
 
     Player p1 = Player("Daniel", 1000);
 
-    std::cout << p1;
+    Board board = Board(3);
+
+    
+
+    for(int i=0; players[i] == last_player; i = ++i % board.n_players) {
+
+    }
 
     return 0;
 }
