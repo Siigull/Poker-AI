@@ -13,6 +13,8 @@ class Player {
 
         Player(int bank_);
         Player(std::string name_, int bank_);
+
+        void clear_cards();
         void add_card(Card card);
         virtual int make_move(int bet) = 0;
         std::string to_string();

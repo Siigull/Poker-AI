@@ -200,7 +200,8 @@ int Board::get_player_hand_value(Player* player) {
     if((x = has_three(hand)))          return 30916 + x; // 12*13^2 + 12*13 + 12 + 1
     if((x = has_two_pair(hand)))       return 28719 + x; // 12*13^3 + 12*13^2 + 12*13 + 12 + 1 + 1
     if((x = has_pair(hand)))           return 169 + x;
-    else                               return get_high(player);
+    else                               return get_high(player); // TODO: didnt realise how high card works. High cards are taken only from
+                                                                //       player's hands. When Board has the highest it should be draw for two players.
 }
 
 void Board::showdown() {
@@ -214,10 +215,10 @@ void Board::showdown() {
 
     std::sort(player_hand_vals.begin(), player_hand_vals.end());
 
-
     for(int i=player_hand_vals.size() - 1; i > 0; i--) {
         if(player_hand_vals[i].first != player_hand_vals[i-1].first) {
-            player_hand_vals.erase(player_hand_vals.begin(), player_hand_vals.begin() + i - 1);
+            player_hand_vals.erase(player_hand_vals.begin(), player_hand_vals.begin() + i);
+            break;
         }
     }
 
@@ -251,14 +252,23 @@ bool Board::next_phase(Deck& deck) {
 
 void Board::print_all_players() {
     for(int i=0; i < total_players; i++) {
+        if(players[i].second) {
+            std::cout << "✅";   
+        } else {
+            std::cout << "❌";
+        }
+        
         std::cout << players[i].first->name << "(" << players[i].first->bank  << ")|";
 
         for(auto c: players[i].first->hand) {
             std::cout << c.to_string() << " ";
         }
+
         for(auto c: cards) {
             std::cout << c.to_string() << " ";
         }
+
+        std::cout << ":" << get_player_hand_value(players[i].first);
 
         std::cout << "\n";
     }
@@ -267,10 +277,14 @@ void Board::print_all_players() {
 void Board::print_board(int index) {
     std::vector<std::vector<char> > board(11, std::vector<char>(70, ' '));
 
+    // for(auto pl: players) {
+    //     std::cout << pl.first << " " << pl.second << "\n";
+    // }
+
     int ti[4][2] = {{8, 24}, {4, 0}, {0, 24}, {4, 50}}; //text indexes (top left of text)
 
     //player info
-    for(int i=0; i < 4; i++, index = next_player(index)) {
+    for(int i=0; i < remaining_players(); i++, index = next_player(index)) {
         std::string x = players[index].first->to_string();
         for(int j=0; j < x.size(); j++) {
             board[ti[i][0]][ti[i][1] + j] = x[j];
@@ -381,9 +395,12 @@ int Board::total_bank() {
 void Board::init() {
     bank.clear();
     round_bank.clear();
-    for(auto pl: players){
-        pl.second = true;
+
+    for(int i=0; i < total_players; i++) {
+        players[i].first->clear_cards();
+        players[i].second = true;
     }
+
     n_cards = 0;
     phase = 0;
 }

@@ -177,6 +177,10 @@ int Human_Player::make_move(int bet) {
 
 /////////////////////////////////
 
+void Player::clear_cards() {
+    n_cards = 0;
+}
+
 void Player::add_card(Card card) {
     if(n_cards > 1) return;
 

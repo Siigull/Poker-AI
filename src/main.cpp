@@ -12,7 +12,8 @@ int main() {
     Player *p1 = new Human_Player("Daniel", 1000);
     Player *p2 = new Human_Player("Krysa", 1000);
     Player *p3 = new Human_Player("Pes", 1000);
-    Player *p4 = new AI_Player("Kocka", 1000);
+    Player *p4 = new Human_Player("Kocka", 1000);
+    // Player *p4 = new AI_Player("Kocka", 1000);
 
     Board board;
     board.add_player(p1);
@@ -23,6 +24,7 @@ int main() {
     bool game = true;
     
     while(game) {
+        deck.init();
         board.init();
 
         //preflop
@@ -71,6 +73,8 @@ int main() {
                
         board.showdown();
         board.print_all_players();
+
+        board.next_turn();
 
         char x;
         while(1) {
